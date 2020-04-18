@@ -23,6 +23,8 @@ If you found other users, please make an issue to let me know.
 
 - [CSCI/ARTI 4530/6530: Introduction to Robotics (Fall 2018),  University of Georgia ](http://cobweb.cs.uga.edu/~ramviyas/csci_x530.html)
 
+- [CIT Modules & Programmes \- COMP9073 \- Automation with Python](https://courses.cit.ie/index.cfm/page/module/moduleId/14416)
+
 # Stargazers location map
 
 You can check stargazer's locations of this project from:
@@ -404,6 +406,12 @@ URL: https://www.semanticscholar.org/paper/A-Review-of-Robot-Rescue-Simulation-P
 7. Ghosh, Ritwika, et al. "CyPhyHouse: A Programming, Simulation, and Deployment Toolchain for Heterogeneous Distributed Coordination." arXiv preprint arXiv:1910.01557 (2019).
 URL: https://arxiv.org/abs/1910.01557
 
+8. Hahn, Carsten, et al. "Dynamic Path Planning with Stable Growing Neural Gas." (2019).
+URL: https://pdfs.semanticscholar.org/5c06/f3cb9542a51e1bf1a32523c1bc7fea6cecc5.pdf
+
+9. Brijen Thananjeyan, et al. "ABC-LMPC: Safe Sample-Based Learning MPC for Stochastic Nonlinear Dynamical Systems with Adjustable Boundary Conditions"
+URL: https://arxiv.org/pdf/2003.01410.pdf
+
 # Others
 
 - Autonomous Vehicle Readings https://richardkelley.io/readings
@@ -412,3 +420,4 @@ URL: https://arxiv.org/abs/1910.01557
 
 - Real-time Model Predictive Control (MPC), ACADO, Python | Work-is-Playing http://grauonline.de/wordpress/?page_id=3244
 
+- 💡 Greatest of GitHub - Python Robotics (Amazing!) - YouTube https://www.youtube.com/watch?v=f_pPaYx6Gu0&feature=emb_logo

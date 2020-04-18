@@ -117,7 +117,7 @@ def jacob_h():
 def ekf_estimation(xEst, PEst, z, u):
     #  Predict
     xPred = motion_model(xEst, u)
-    jF = jacob_f(xPred, u)
+    jF = jacob_f(xEst, u)
     PPred = jF @ PEst @ jF.T + Q
 
     #  Update
@@ -128,7 +128,6 @@ def ekf_estimation(xEst, PEst, z, u):
     K = PPred @ jH.T @ np.linalg.inv(S)
     xEst = xPred + K @ y
     PEst = (np.eye(len(xEst)) - K @ jH) @ PPred
-
     return xEst, PEst
 
 
@@ -191,6 +190,9 @@ def main():
 
         if show_animation:
             plt.cla()
+            # for stopping simulation with the esc key.
+            plt.gcf().canvas.mpl_connect('key_release_event',
+                    lambda event: [exit(0) if event.key == 'escape' else None])
             plt.plot(hz[0, :], hz[1, :], ".g")
             plt.plot(hxTrue[0, :].flatten(),
                      hxTrue[1, :].flatten(), "-b")

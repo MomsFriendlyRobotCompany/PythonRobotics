@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append("../ReedsSheppPath/")
 try:
-    from a_star import dp_planning  # , calc_obstacle_map
+    from a_star_heuristic import dp_planning  # , calc_obstacle_map
     import reeds_shepp_path_planning as rs
     from car import move, check_car_collision, MAX_STEER, WB, plot_car
 except:
@@ -150,7 +150,7 @@ def calc_next_node(current, steer, direction, config, ox, oy, kdtree):
 
     arc_l = XY_GRID_RESOLUTION * 1.5
     xlist, ylist, yawlist = [], [], []
-    for dist in np.arange(0, arc_l, MOTION_RESOLUTION):
+    for _ in np.arange(0, arc_l, MOTION_RESOLUTION):
         x, y, yaw = move(x, y, yaw, MOTION_RESOLUTION * direction, steer)
         xlist.append(x)
         ylist.append(y)
@@ -327,6 +327,9 @@ def hybrid_a_star_planning(start, goal, ox, oy, xyreso, yawreso):
 
         if show_animation:  # pragma: no cover
             plt.plot(current.xlist[-1], current.ylist[-1], "xc")
+            # for stopping simulation with the esc key.
+            plt.gcf().canvas.mpl_connect('key_release_event',
+                    lambda event: [exit(0) if event.key == 'escape' else None])
             if len(closedList.keys()) % 10 == 0:
                 plt.pause(0.001)
 

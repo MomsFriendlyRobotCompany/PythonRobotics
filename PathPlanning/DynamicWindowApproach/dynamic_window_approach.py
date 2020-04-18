@@ -22,7 +22,7 @@ def dwa_control(x, config, goal, ob):
 
     dw = calc_dynamic_window(x, config)
 
-    u, trajectory = calc_final_input(x, dw, config, goal, ob)
+    u, trajectory = calc_control_and_trajectory(x, dw, config, goal, ob)
 
     return u, trajectory
 
@@ -101,7 +101,7 @@ def calc_dynamic_window(x, config):
           x[4] - config.max_dyawrate * config.dt,
           x[4] + config.max_dyawrate * config.dt]
 
-    #  [vmin,vmax, yaw_rate min, yaw_rate max]
+    #  [vmin, vmax, yaw_rate min, yaw_rate max]
     dw = [max(Vs[0], Vd[0]), min(Vs[1], Vd[1]),
           max(Vs[2], Vd[2]), min(Vs[3], Vd[3])]
 
@@ -124,7 +124,7 @@ def predict_trajectory(x_init, v, y, config):
     return traj
 
 
-def calc_final_input(x, dw, config, goal, ob):
+def calc_control_and_trajectory(x, dw, config, goal, ob):
     """
     calculation final input with dynamic window
     """
@@ -164,7 +164,7 @@ def calc_obstacle_cost(trajectory, ob, config):
     oy = ob[:, 1]
     dx = trajectory[:, 0] - ox[:, None]
     dy = trajectory[:, 1] - oy[:, None]
-    r = np.sqrt(np.square(dx) + np.square(dy))
+    r = np.hypot(dx, dy)
 
     if config.robot_type == RobotType.rectangle:
         yaw = trajectory[:, 2]
@@ -268,6 +268,9 @@ def main(gx=10.0, gy=10.0, robot_type=RobotType.circle):
 
         if show_animation:
             plt.cla()
+            # for stopping simulation with the esc key.
+            plt.gcf().canvas.mpl_connect('key_release_event',
+                    lambda event: [exit(0) if event.key == 'escape' else None])
             plt.plot(predicted_trajectory[:, 0], predicted_trajectory[:, 1], "-g")
             plt.plot(x[0], x[1], "xr")
             plt.plot(goal[0], goal[1], "xb")
@@ -279,7 +282,7 @@ def main(gx=10.0, gy=10.0, robot_type=RobotType.circle):
             plt.pause(0.0001)
 
         # check reaching goal
-        dist_to_goal = math.sqrt((x[0] - goal[0]) ** 2 + (x[1] - goal[1]) ** 2)
+        dist_to_goal = math.hypot(x[0] - goal[0], x[1] - goal[1])
         if dist_to_goal <= config.robot_radius:
             print("Goal!!")
             break
@@ -293,4 +296,4 @@ def main(gx=10.0, gy=10.0, robot_type=RobotType.circle):
 
 
 if __name__ == '__main__':
-    main(robot_type=RobotType.rectangle)
+    main(robot_type=RobotType.circle)

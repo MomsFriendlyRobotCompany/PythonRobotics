@@ -216,7 +216,7 @@ def observation(xTrue, xd, u, RFID):
 
         dx = RFID[i, 0] - xTrue[0, 0]
         dy = RFID[i, 1] - xTrue[1, 0]
-        d = math.sqrt(dx**2 + dy**2)
+        d = math.hypot(dx, dy)
         angle = pi_2_pi(math.atan2(dy, dx)) - xTrue[2, 0]
         phi = pi_2_pi(math.atan2(dy, dx))
         if d <= MAX_RANGE:
@@ -303,7 +303,9 @@ def main():
 
             if show_animation:  # pragma: no cover
                 plt.cla()
-
+                # for stopping simulation with the esc key.
+                plt.gcf().canvas.mpl_connect('key_release_event',
+                        lambda event: [exit(0) if event.key == 'escape' else None])
                 plt.plot(RFID[:, 0], RFID[:, 1], "*k")
 
                 plt.plot(hxTrue[0, :].flatten(),

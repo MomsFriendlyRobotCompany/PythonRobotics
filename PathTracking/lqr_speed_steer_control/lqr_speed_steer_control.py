@@ -212,7 +212,7 @@ def do_simulation(cx, cy, cyaw, ck, speed_profile, goal):
         # check goal
         dx = state.x - goal[0]
         dy = state.y - goal[1]
-        if math.sqrt(dx ** 2 + dy ** 2) <= goal_dis:
+        if math.hypot(dx, dy) <= goal_dis:
             print("Goal")
             break
 
@@ -224,6 +224,9 @@ def do_simulation(cx, cy, cyaw, ck, speed_profile, goal):
 
         if target_ind % 1 == 0 and show_animation:
             plt.cla()
+            # for stopping simulation with the esc key.
+            plt.gcf().canvas.mpl_connect('key_release_event',
+                    lambda event: [exit(0) if event.key == 'escape' else None])
             plt.plot(cx, cy, "-r", label="course")
             plt.plot(x, y, "ob", label="trajectory")
             plt.plot(cx[target_ind], cy[target_ind], "xg", label="target")

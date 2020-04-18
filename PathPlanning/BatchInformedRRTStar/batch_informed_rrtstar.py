@@ -180,8 +180,8 @@ class BITStar(object):
         cBest = self.g_scores[self.goalId]
 
         # Computing the sampling space
-        cMin = math.sqrt(pow(self.start[0] - self.goal[0], 2)
-                         + pow(self.start[1] - self.goal[1], 2)) / 1.5
+        cMin = math.hypot(self.start[0] - self.goal[0],
+                          self.start[1] - self.goal[1]) / 1.5
         xCenter = np.array([[(self.start[0] + self.goal[0]) / 2.0],
                             [(self.start[1] + self.goal[1]) / 2.0], [0]])
         a1 = np.array([[(self.goal[0] - self.start[0]) / cMin],
@@ -534,6 +534,9 @@ class BITStar(object):
     def draw_graph(self, xCenter=None, cBest=None, cMin=None, etheta=None,
                    samples=None, start=None, end=None):
         plt.clf()
+        # for stopping simulation with the esc key.
+        plt.gcf().canvas.mpl_connect('key_release_event',
+                lambda event: [exit(0) if event.key == 'escape' else None])
         for rnd in samples:
             if rnd is not None:
                 plt.plot(rnd[0], rnd[1], "^k")

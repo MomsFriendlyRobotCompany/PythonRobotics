@@ -126,7 +126,7 @@ class RRT:
     def calc_dist_to_goal(self, x, y):
         dx = x - self.end.x
         dy = y - self.end.y
-        return math.sqrt(dx ** 2 + dy ** 2)
+        return math.hypot(dx, dy)
 
     def get_random_node(self):
         if random.randint(0, 100) > self.goal_sample_rate:
@@ -138,6 +138,9 @@ class RRT:
 
     def draw_graph(self, rnd=None):
         plt.clf()
+        # for stopping simulation with the esc key.
+        plt.gcf().canvas.mpl_connect('key_release_event',
+                                     lambda event: [exit(0) if event.key == 'escape' else None])
         if rnd is not None:
             plt.plot(rnd.x, rnd.y, "^k")
         for node in self.node_list:
@@ -172,6 +175,10 @@ class RRT:
 
     @staticmethod
     def check_collision(node, obstacleList):
+
+        if node is None:
+            return False
+
         for (ox, oy, size) in obstacleList:
             dx_list = [ox - x for x in node.path_x]
             dy_list = [oy - y for y in node.path_y]
@@ -186,7 +193,7 @@ class RRT:
     def calc_distance_and_angle(from_node, to_node):
         dx = to_node.x - from_node.x
         dy = to_node.y - from_node.y
-        d = math.sqrt(dx ** 2 + dy ** 2)
+        d = math.hypot(dx, dy)
         theta = math.atan2(dy, dx)
         return d, theta
 
