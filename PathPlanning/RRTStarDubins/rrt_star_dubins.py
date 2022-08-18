@@ -20,7 +20,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) +
                 "/../RRTStar/")
 
 try:
-    import dubins_path_planning
+    import dubins_path_planner
     from rrt_star import RRTStar
 except ImportError:
     raise
@@ -46,7 +46,8 @@ class RRTStarDubins(RRTStar):
     def __init__(self, start, goal, obstacle_list, rand_area,
                  goal_sample_rate=10,
                  max_iter=200,
-                 connect_circle_dist=50.0
+                 connect_circle_dist=50.0,
+                 robot_radius=0.0,
                  ):
         """
         Setting Parameter
@@ -55,6 +56,7 @@ class RRTStarDubins(RRTStar):
         goal:Goal Position [x,y]
         obstacleList:obstacle Positions [[x,y,size],...]
         randArea:Random Sampling Area [min,max]
+        robot_radius: robot body modeled as circle with given radius
 
         """
         self.start = self.Node(start[0], start[1], start[2])
@@ -69,6 +71,7 @@ class RRTStarDubins(RRTStar):
         self.curvature = 1.0  # for dubins path
         self.goal_yaw_th = np.deg2rad(1.0)
         self.goal_xy_th = 0.5
+        self.robot_radius = robot_radius
 
     def planning(self, animation=True, search_until_max_iter=True):
         """
@@ -84,7 +87,8 @@ class RRTStarDubins(RRTStar):
             nearest_ind = self.get_nearest_node_index(self.node_list, rnd)
             new_node = self.steer(self.node_list[nearest_ind], rnd)
 
-            if self.check_collision(new_node, self.obstacle_list):
+            if self.check_collision(
+                    new_node, self.obstacle_list, self.robot_radius):
                 near_indexes = self.find_near_nodes(new_node)
                 new_node = self.choose_parent(new_node, near_indexes)
                 if new_node:
@@ -132,16 +136,17 @@ class RRTStarDubins(RRTStar):
         plt.pause(0.01)
 
     def plot_start_goal_arrow(self):
-        dubins_path_planning.plot_arrow(
+        dubins_path_planner.plot_arrow(
             self.start.x, self.start.y, self.start.yaw)
-        dubins_path_planning.plot_arrow(
+        dubins_path_planner.plot_arrow(
             self.end.x, self.end.y, self.end.yaw)
 
     def steer(self, from_node, to_node):
 
-        px, py, pyaw, mode, course_length = dubins_path_planning.dubins_path_planning(
-            from_node.x, from_node.y, from_node.yaw,
-            to_node.x, to_node.y, to_node.yaw, self.curvature)
+        px, py, pyaw, mode, course_lengths = \
+            dubins_path_planner.plan_dubins_path(
+                from_node.x, from_node.y, from_node.yaw,
+                to_node.x, to_node.y, to_node.yaw, self.curvature)
 
         if len(px) <= 1:  # cannot find a dubins path
             return None
@@ -154,18 +159,20 @@ class RRTStarDubins(RRTStar):
         new_node.path_x = px
         new_node.path_y = py
         new_node.path_yaw = pyaw
-        new_node.cost += course_length
+        new_node.cost += sum([abs(c) for c in course_lengths])
         new_node.parent = from_node
 
         return new_node
 
     def calc_new_cost(self, from_node, to_node):
 
-        _, _, _, _, course_length = dubins_path_planning.dubins_path_planning(
+        _, _, _, _, course_lengths = dubins_path_planner.plan_dubins_path(
             from_node.x, from_node.y, from_node.yaw,
             to_node.x, to_node.y, to_node.yaw, self.curvature)
 
-        return from_node.cost + course_length
+        cost = sum([abs(c) for c in course_lengths])
+
+        return from_node.cost + cost
 
     def get_random_node(self):
 

@@ -13,14 +13,14 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import sys
+sys.path.insert(0, os.path.abspath('../'))
 
 
 # -- Project information -----------------------------------------------------
 
 project = 'PythonRobotics'
-copyright = '2018, Atsushi Sakai'
+copyright = '2018-2021, Atsushi Sakai'
 author = 'Atsushi Sakai'
 
 # The short X.Y version
@@ -39,10 +39,13 @@ release = ''
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'matplotlib.sphinxext.plot_directive',
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
-    'sphinx.ext.viewcode',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.imgconverter',
+    'IPython.sphinxext.ipython_console_highlighting',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -52,7 +55,7 @@ templates_path = ['_templates']
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = '_main.rst'
 
 # The master toctree document.
 master_doc = 'index'
@@ -62,7 +65,7 @@ master_doc = 'index'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -94,10 +97,23 @@ html_theme_options = {
     'display_version': False,
 }
 
+# replace "view page source" with "edit on github" in Read The Docs theme
+#  * https://github.com/readthedocs/sphinx_rtd_theme/issues/529
+html_context = {
+    'display_github': True,
+    'github_user': 'AtsushiSakai',
+    'github_repo': 'PythonRobotics',
+    'github_version': 'master',
+    "conf_py_path": "/docs/",
+    "source_suffix": source_suffix,
+}
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+html_css_files = ['custom.css']
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.

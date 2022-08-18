@@ -120,8 +120,8 @@ class GridMap:
 
         # making ring polygon
         if (pol_x[0] != pol_x[-1]) or (pol_y[0] != pol_y[-1]):
-            pol_x.append(pol_x[0])
-            pol_y.append(pol_y[0])
+            np.append(pol_x, pol_x[0])
+            np.append(pol_y, pol_y[0])
 
         # setting value for all grid
         for x_ind in range(self.width):
@@ -194,7 +194,7 @@ class GridMap:
                 min_x, max_x = x[i2], x[i1]
             else:
                 min_x, max_x = x[i1], x[i2]
-            if not min_x < iox < max_x:
+            if not min_x <= iox < max_x:
                 continue
 
             tmp1 = (y[i2] - y[i1]) / (x[i2] - x[i1])
@@ -226,8 +226,8 @@ class GridMap:
 
 
 def test_polygon_set():
-    ox = [0.0, 20.0, 50.0, 100.0, 130.0, 40.0]
-    oy = [0.0, -20.0, 0.0, 30.0, 60.0, 80.0]
+    ox = [0.0, 4.35, 20.0, 50.0, 100.0, 130.0, 40.0]
+    oy = [0.0, -4.15, -20.0, 0.0, 30.0, 60.0, 80.0]
 
     grid_map = GridMap(600, 290, 0.7, 60.0, 30.5)
 

@@ -40,7 +40,7 @@ def pure_pursuit_control(state, cx, cy, pind):
     if pind >= ind:
         ind = pind
 
-    #  print(pind, ind)
+    #  print(parent_index, ind)
     if ind < len(cx):
         tx = cx[ind]
         ty = cy[ind]
@@ -181,12 +181,12 @@ def set_stop_point(target_speed, cx, cy, cyaw):
             speed_profile[i] = 0.0
             forward = False
             #  plt.plot(cx[i], cy[i], "xb")
-            #  print(iyaw, move_direction, dx, dy)
+            #  print(i_yaw, move_direction, dx, dy)
         elif not is_back and not forward:
             speed_profile[i] = 0.0
             forward = True
             #  plt.plot(cx[i], cy[i], "xb")
-            #  print(iyaw, move_direction, dx, dy)
+            #  print(i_yaw, move_direction, dx, dy)
     speed_profile[0] = 0.0
     if is_back:
         speed_profile[-1] = -stop_speed
@@ -250,7 +250,7 @@ def main():  # pragma: no cover
     yaw = [state.yaw]
     v = [state.v]
     t = [0.0]
-    target_ind = calc_target_index(state, cx, cy)
+    target_ind, dis = calc_target_index(state, cx, cy)
 
     while T >= time and lastIndex > target_ind:
         ai = PIDControl(target_speed, state.v)
@@ -291,43 +291,6 @@ def main():  # pragma: no cover
     plt.show()
 
 
-def main2():  # pragma: no cover
-    import pandas as pd
-    data = pd.read_csv("rrt_course.csv")
-    cx = np.array(data["x"])
-    cy = np.array(data["y"])
-    cyaw = np.array(data["yaw"])
-
-    target_speed = 10.0 / 3.6
-
-    goal = [cx[-1], cy[-1]]
-
-    cx, cy, cyaw = extend_path(cx, cy, cyaw)
-
-    speed_profile = calc_speed_profile(cx, cy, cyaw, target_speed)
-
-    t, x, y, yaw, v, a, d, flag = closed_loop_prediction(
-        cx, cy, cyaw, speed_profile, goal)
-
-    plt.subplots(1)
-    plt.plot(cx, cy, ".r", label="course")
-    plt.plot(x, y, "-b", label="trajectory")
-    plt.plot(goal[0], goal[1], "xg", label="goal")
-    plt.legend()
-    plt.xlabel("x[m]")
-    plt.ylabel("y[m]")
-    plt.axis("equal")
-    plt.grid(True)
-
-    plt.subplots(1)
-    plt.plot(t, [iv * 3.6 for iv in v], "-r")
-    plt.xlabel("Time[s]")
-    plt.ylabel("Speed[km/h]")
-    plt.grid(True)
-    plt.show()
-
-
 if __name__ == '__main__':  # pragma: no cover
     print("Pure pursuit path tracking simulation start")
-    #  main()
-    main2()
+    main()

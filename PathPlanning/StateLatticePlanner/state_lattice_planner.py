@@ -25,7 +25,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__))
 try:
     import model_predictive_trajectory_generator as planner
     import motion_model
-except:
+except ImportError:
     raise
 
 
@@ -156,8 +156,8 @@ def calc_lane_states(l_center, l_heading, l_width, v_width, d, nxy):
     :param nxy: sampling number
     :return: state list
     """
-    xc = math.cos(l_heading) * d + math.sin(l_heading) * l_center
-    yc = math.sin(l_heading) * d + math.cos(l_heading) * l_center
+    xc = d
+    yc = l_center
 
     states = []
     for i in range(nxy):
@@ -301,13 +301,16 @@ def lane_state_sampling_test1():
     k0 = 0.0
 
     l_center = 10.0
-    l_heading = np.deg2rad(90.0)
+    l_heading = np.deg2rad(0.0)
     l_width = 3.0
     v_width = 1.0
     d = 10
     nxy = 5
     states = calc_lane_states(l_center, l_heading, l_width, v_width, d, nxy)
     result = generate_path(states, k0)
+
+    if show_animation:
+        plt.close("all")
 
     for table in result:
         xc, yc, yawc = motion_model.generate_trajectory(
@@ -323,6 +326,7 @@ def lane_state_sampling_test1():
 
 
 def main():
+    planner.show_animation = show_animation
     uniform_terminal_state_sampling_test1()
     uniform_terminal_state_sampling_test2()
     biased_terminal_state_sampling_test1()

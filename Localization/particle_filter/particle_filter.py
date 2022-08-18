@@ -5,11 +5,16 @@ Particle Filter localization sample
 author: Atsushi Sakai (@Atsushi_twi)
 
 """
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../utils/")
 
 import math
 
 import matplotlib.pyplot as plt
 import numpy as np
+
+from utils.angle import rot_mat_2d
 
 # Estimation parameter of PF
 Q = np.diag([0.2]) ** 2  # range error
@@ -172,8 +177,9 @@ def plot_covariance_ellipse(x_est, p_est):  # pragma: no cover
 
     t = np.arange(0, 2 * math.pi + 0.1, 0.1)
 
-    # eig_val[big_ind] or eiq_val[small_ind] were occasionally negative numbers extremely
-    # close to 0 (~10^-20), catch these cases and set the respective variable to 0
+    # eig_val[big_ind] or eiq_val[small_ind] were occasionally negative
+    # numbers extremely close to 0 (~10^-20), catch these cases and set the
+    # respective variable to 0
     try:
         a = math.sqrt(eig_val[big_ind])
     except ValueError:
@@ -186,12 +192,10 @@ def plot_covariance_ellipse(x_est, p_est):  # pragma: no cover
 
     x = [a * math.cos(it) for it in t]
     y = [b * math.sin(it) for it in t]
-    angle = math.atan2(eig_vec[big_ind, 1], eig_vec[big_ind, 0])
-    Rot = np.array([[math.cos(angle), -math.sin(angle)],
-                    [math.sin(angle), math.cos(angle)]])
-    fx = Rot.dot(np.array([[x, y]]))
-    px = np.array(fx[0, :] + x_est[0, 0]).flatten()
-    py = np.array(fx[1, :] + x_est[1, 0]).flatten()
+    angle = math.atan2(eig_vec[1, big_ind], eig_vec[0, big_ind])
+    fx = rot_mat_2d(angle) @ np.array([[x, y]])
+    px = np.array(fx[:, 0] + x_est[0, 0]).flatten()
+    py = np.array(fx[:, 1] + x_est[1, 0]).flatten()
     plt.plot(px, py, "--r")
 
 
@@ -235,8 +239,9 @@ def main():
         if show_animation:
             plt.cla()
             # for stopping simulation with the esc key.
-            plt.gcf().canvas.mpl_connect('key_release_event',
-                                         lambda event: [exit(0) if event.key == 'escape' else None])
+            plt.gcf().canvas.mpl_connect(
+                'key_release_event',
+                lambda event: [exit(0) if event.key == 'escape' else None])
 
             for i in range(len(z[:, 0])):
                 plt.plot([x_true[0, 0], z[i, 1]], [x_true[1, 0], z[i, 2]], "-k")
