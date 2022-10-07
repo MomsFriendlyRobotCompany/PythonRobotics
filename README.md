@@ -103,8 +103,6 @@ For running each sample code:
  
 - [Matplotlib](https://matplotlib.org/)
  
-- [pandas](https://pandas.pydata.org/)
-
 - [cvxpy](https://www.cvxpy.org/) 
 
 For development:
@@ -633,6 +631,11 @@ If you would like to support us in some other way, please contact with creating 
 ### [JetBrains](https://www.jetbrains.com/)
 
 They are providing a free license of their IDEs for this OSS development.   
+
+### [1Password](https://github.com/1Password/1password-teams-open-source)
+
+They are providing a free license of their 1Password team license for this OSS project.   
+
 
 # Authors
 
