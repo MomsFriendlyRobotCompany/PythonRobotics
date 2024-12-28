@@ -65,7 +65,7 @@ def calc_distance_heuristic(gx, gy, ox, oy, resolution, rr):
     open_set[calc_index(goal_node, x_w, min_x, min_y)] = goal_node
     priority_queue = [(0, calc_index(goal_node, x_w, min_x, min_y))]
 
-    while 1:
+    while True:
         if not priority_queue:
             break
         cost, c_id = heapq.heappop(priority_queue)
@@ -150,7 +150,7 @@ def calc_obstacle_map(ox, oy, resolution, vr):
             y = iy + min_y
             #  print(x, y)
             for iox, ioy in zip(ox, oy):
-                d = math.sqrt((iox - x) ** 2 + (ioy - y) ** 2)
+                d = math.hypot(iox - x, ioy - y)
                 if d <= vr / resolution:
                     obstacle_map[ix][iy] = True
                     break

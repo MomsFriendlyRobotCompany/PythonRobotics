@@ -6,12 +6,15 @@ author: Atsushi Sakai (@Atsushi_twi)
 
 """
 import matplotlib.pyplot as plt
+import time
 import cvxpy
 import math
 import numpy as np
 import sys
 import pathlib
 sys.path.append(str(pathlib.Path(__file__).parent.parent.parent))
+
+from utils.angle import angle_mod
 
 from PathPlanning.CubicSpline import cubic_spline_planner
 
@@ -69,13 +72,7 @@ class State:
 
 
 def pi_2_pi(angle):
-    while(angle > math.pi):
-        angle = angle - 2.0 * math.pi
-
-    while(angle < -math.pi):
-        angle = angle + 2.0 * math.pi
-
-    return angle
+    return angle_mod(angle)
 
 
 def get_linear_model_matrix(v, phi, delta):
@@ -225,8 +222,9 @@ def predict_motion(x0, oa, od, xref):
 
 def iterative_linear_mpc_control(xref, x0, dref, oa, od):
     """
-    MPC contorl with updating operational point iteraitvely
+    MPC control with updating operational point iteratively
     """
+    ox, oy, oyaw, ov = None, None, None, None
 
     if oa is None or od is None:
         oa = [0.0] * T
@@ -285,7 +283,7 @@ def linear_mpc_control(xref, xbar, x0, dref):
     constraints += [cvxpy.abs(u[1, :]) <= MAX_STEER]
 
     prob = cvxpy.Problem(cvxpy.Minimize(cost), constraints)
-    prob.solve(solver=cvxpy.ECOS, verbose=False)
+    prob.solve(solver=cvxpy.CLARABEL, verbose=False)
 
     if prob.status == cvxpy.OPTIMAL or prob.status == cvxpy.OPTIMAL_INACCURATE:
         ox = get_nparray_from_matrix(x.value[0, :])
@@ -406,10 +404,11 @@ def do_simulation(cx, cy, cyaw, ck, sp, dl, initial_state):
         oa, odelta, ox, oy, oyaw, ov = iterative_linear_mpc_control(
             xref, x0, dref, oa, odelta)
 
+        di, ai = 0.0, 0.0
         if odelta is not None:
             di, ai = odelta[0], oa[0]
+            state = update_state(state, ai, di)
 
-        state = update_state(state, ai, di)
         time = time + DT
 
         x.append(state.x)
@@ -548,6 +547,7 @@ def get_switch_back_course(dl):
 
 def main():
     print(__file__ + " start!!")
+    start = time.time()
 
     dl = 1.0  # course tick
     # cx, cy, cyaw, ck = get_straight_course(dl)
@@ -562,6 +562,9 @@ def main():
 
     t, x, y, yaw, v, d, a = do_simulation(
         cx, cy, cyaw, ck, sp, dl, initial_state)
+
+    elapsed_time = time.time() - start
+    print(f"calc time:{elapsed_time:.6f} [sec]")
 
     if show_animation:  # pragma: no cover
         plt.close("all")
@@ -585,6 +588,7 @@ def main():
 
 def main2():
     print(__file__ + " start!!")
+    start = time.time()
 
     dl = 1.0  # course tick
     cx, cy, cyaw, ck = get_straight_course3(dl)
@@ -595,6 +599,9 @@ def main2():
 
     t, x, y, yaw, v, d, a = do_simulation(
         cx, cy, cyaw, ck, sp, dl, initial_state)
+
+    elapsed_time = time.time() - start
+    print(f"calc time:{elapsed_time:.6f} [sec]")
 
     if show_animation:  # pragma: no cover
         plt.close("all")

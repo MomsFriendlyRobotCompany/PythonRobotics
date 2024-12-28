@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Configuration file for the Sphinx documentation builder.
 #
@@ -20,7 +19,7 @@ sys.path.insert(0, os.path.abspath('../'))
 # -- Project information -----------------------------------------------------
 
 project = 'PythonRobotics'
-copyright = '2018-2021, Atsushi Sakai'
+copyright = '2018-2023, Atsushi Sakai'
 author = 'Atsushi Sakai'
 
 # The short X.Y version
@@ -46,6 +45,8 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.imgconverter',
     'IPython.sphinxext.ipython_console_highlighting',
+    'sphinx_copybutton',
+    'sphinx_rtd_dark_mode',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -86,7 +87,7 @@ on_rtd = os.environ.get('READTHEDOCS') == 'True'
 if on_rtd:
     html_theme = 'default'
 else:
-    html_theme = 'sphinx_rtd_theme'
+    html_theme = 'sphinx_rtd_light_them'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

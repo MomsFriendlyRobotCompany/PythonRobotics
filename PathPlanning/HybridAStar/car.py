@@ -59,9 +59,9 @@ def rectangle_check(x, y, yaw, ox, oy):
         rx, ry = converted_xy[0], converted_xy[1]
 
         if not (rx > LF or rx < -LB or ry > W / 2.0 or ry < -W / 2.0):
-            return False  # no collision
+            return False  # collision
 
-    return True  # collision
+    return True  # no collision
 
 
 def plot_arrow(x, y, yaw, length=1.0, width=0.5, fc="r", ec="k"):
@@ -97,7 +97,7 @@ def pi_2_pi(angle):
 def move(x, y, yaw, distance, steer, L=WB):
     x += distance * cos(yaw)
     y += distance * sin(yaw)
-    yaw += pi_2_pi(distance * tan(steer) / L)  # distance/2
+    yaw = pi_2_pi(yaw + distance * tan(steer) / L)  # distance/2
 
     return x, y, yaw
 

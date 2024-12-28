@@ -1,4 +1,5 @@
 from Mapping.grid_map_lib.grid_map_lib import GridMap
+import conftest
 import numpy as np
 
 
@@ -22,6 +23,17 @@ def test_polygon_set():
     grid_map.set_value_from_polygon(ox, oy, 1.0, inside=False)
     grid_map.set_value_from_polygon(np.array(ox), np.array(oy),
                                     1.0, inside=False)
+
+
+def test_xy_and_grid_index_conversion():
+    grid_map = GridMap(100, 120, 0.5, 10.0, -0.5)
+
+    for x_ind in range(grid_map.width):
+        for y_ind in range(grid_map.height):
+            grid_ind = grid_map.calc_grid_index_from_xy_index(x_ind, y_ind)
+            x_ind_2, y_ind_2 = grid_map.calc_xy_index_from_grid_index(grid_ind)
+            assert x_ind == x_ind_2
+            assert y_ind == y_ind_2
 
 
 if __name__ == '__main__':
